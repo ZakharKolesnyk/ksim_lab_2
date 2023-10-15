@@ -10,6 +10,11 @@
 ### Внесені зміни у вихідну логіку моделі, за варіантом:
 
 ---
+**Додан показник смертності за отруєнням:** До графіку "Deaths by Type" дондан нови показник "Poisoned".
+
+![deaths](deaths.png)
+
+---
 **Додан показник швидкості здобувача:** Додан тоглер який показує швидкість здобувача `show-speed?`.
 
 ![show-speed](show-speed.png)
@@ -72,7 +77,7 @@
 
 ---
 **Зміни у зборі куща:** 
-додан блок кожу у кінеці функціі збору куща `forage`, якщо кущ отруєний виконується логіка по отруєнню збірника.
+додан блок коlу у кінці функціі збору куща `forage`, якщо кущ отруєний виконується логіка по отруєнню збірника.
 
 якщо сила збірника нижча за `strength-value-resistent-to-poison`:
 1. здобувач помирає
@@ -112,7 +117,7 @@
 
 до змін:
 <pre>
-      if-else show-energy?
+  if-else show-energy?
       [ set label precision energy 0 ]
       [ set label " " ]
 </pre>
@@ -131,10 +136,65 @@
      ]
 </pre>
 
+#### 2. виведення токсинів після отруюння
+1. якщо це останній такт отруєння колір повертається до сірого та швидкість відновлюється до нормальної
+2. декремент отруєниих тактів
+
+<pre>
+    if poisoned-slownless-tick-count = 1
+      [ 
+        set speed get-speed 
+        set color gray
+      ]
+    set poisoned-slownless-tick-count poisoned-slownless-tick-count - 1
+</pre>
+
+#### 3. втрата здатності до репродукціі
+до умови репродукціі додана нова умова "не бути отруєним", до змін умовою було лише "мати енергію > 200"
+до змін:
+<pre>
+  if energy > 200
+</pre>
+після змін
+<pre>
+  if energy > 200 and poisoned-slownless-tick-count <= 0
+</pre>
+
+---
+**Зміни у побудові данних для графіку смертності:**
+1. було додані нові змінні: `poisoned-death-count` та `poisoned-death-rate`
+2. була змінена логіка обчислення показників смертності
+
+до змін:
+<pre>
+  if-else (murder-count + age-death-count + starvation-count) = 0
+  [
+    set murder-rate 0
+    set starvation-rate 0
+    set age-death-rate 0
+  ]
+  [
+    set murder-rate 100 * murder-count / (murder-count + age-death-count + starvation-count)
+    set starvation-rate 100 * starvation-count / (murder-count + age-death-count + starvation-count)
+    set age-death-rate 100 * age-death-count / (murder-count + age-death-count + starvation-count)
+  ]
+</pre>
+
+після змін:
+<pre>
+  let totalDeaths murder-count + age-death-count + starvation-count + poisoned-death-count
+  if-else (totalDeaths) = 0
+  [
+    set murder-rate 0
+    set starvation-rate 0
+    set age-death-rate 0
+    set poisoned-death-rate 0
+  ]
+  [
+    set murder-rate 100 * murder-count / totalDeaths
+    set starvation-rate 100 * starvation-count / totalDeaths
+    set age-death-rate 100 * age-death-count / totalDeaths
+    set
+</pre>
 
 
-
-while poisoned
-- -50 energy
-- can't reproduce
-- red color
