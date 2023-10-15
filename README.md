@@ -87,7 +87,6 @@
 1. виживає та отримує інтоксікацію на деяку кількість тактів (`poisoned-slownless-tick-count`)
 2. втрачає щвидкість
 3. втрачає енергію
-4. міняє колір на чевоний
 <pre>
   if bushPoisoned
   [
@@ -102,7 +101,6 @@
         set poisoned-slownless-tick-count ticks-number-poisoning-slow
         set speed speed * poisoned-speed-index
         set energy energy - 50
-        set color red
       ]
     ]
   ]
@@ -137,15 +135,12 @@
 </pre>
 
 #### 2. виведення токсинів після отруюння
-1. якщо це останній такт отруєння колір повертається до сірого та швидкість відновлюється до нормальної
+1. якщо це останній такт отруєння швидкість відновлюється до нормальної
 2. декремент отруєниих тактів
 
 <pre>
     if poisoned-slownless-tick-count = 1
-      [ 
-        set speed get-speed 
-        set color gray
-      ]
+      [ set speed get-speed ]
     set poisoned-slownless-tick-count poisoned-slownless-tick-count - 1
 </pre>
 
