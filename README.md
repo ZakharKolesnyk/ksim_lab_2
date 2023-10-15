@@ -194,7 +194,8 @@
     set murder-rate 100 * murder-count / totalDeaths
     set starvation-rate 100 * starvation-count / totalDeaths
     set age-death-rate 100 * age-death-count / totalDeaths
-    set
+    set poisoned-death-rate 100 * poisoned-death-count / totalDeaths
+  ]
 </pre>
 
 
